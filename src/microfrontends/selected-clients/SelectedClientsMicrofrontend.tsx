@@ -4,22 +4,20 @@ import { useUserStore } from '../../store/userStore';
 import { useClientStore } from '../../store/clientStore';
 import { useClientApi } from '../../hooks/useClientApi';
 import { Client } from '../../types/Client';
-import ClientForm from './components/ClientForm';
-import ClientTable from './components/ClientTable';
-import ClientCards from './components/ClientCards';
-import Modal from './components/Modal';
-import SelectedClientsModal from './components/SelectedClientsModal';
+import ClientForm from '../clients/components/ClientForm';
+import ClientTable from '../clients/components/ClientTable';
+import ClientCards from '../clients/components/ClientCards';
+import Modal from '../clients/components/Modal';
 import Sidebar from '../../components/Sidebar';
 
-const ClientsMicrofrontend: React.FC = () => {
+const SelectedClientsMicrofrontend: React.FC = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
-  const { clients, currentPage, setClients, setPagination, setLoading, setError } = useClientStore();
+  const { currentPage, setClients, setPagination, setLoading, setError } = useClientStore();
   const { getClients } = useClientApi();
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClients, setSelectedClients] = useState<number[]>([]);
-  const [isSelectedClientsModalOpen, setIsSelectedClientsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
   useEffect(() => {
@@ -68,24 +66,6 @@ const ClientsMicrofrontend: React.FC = () => {
     navigate(`/cliente/${client.id}`);
   };
 
-  const handleCloseSelectedClientsModal = () => {
-    setIsSelectedClientsModalOpen(false);
-  };
-
-  const handleEditFromSelected = (clientId: number) => {
-    const client = clients.find(c => c.id === clientId);
-    if (client) {
-      setEditingClient(client);
-      setIsModalOpen(true);
-      setIsSelectedClientsModalOpen(false);
-    }
-  };
-
-  const handleViewFromSelected = (clientId: number) => {
-    setIsSelectedClientsModalOpen(false);
-    navigate(`/cliente/${clientId}`);
-  };
-
   if (!user) {
     navigate('/');
     return null;
@@ -99,7 +79,7 @@ const ClientsMicrofrontend: React.FC = () => {
         <div className="w-full max-w-none xl:max-w-[80%] mx-auto p-5">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
             <div className="flex justify-between items-center flex-wrap gap-4">
-              <h1 className="text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes</h1>
+              <h1 className="text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes Selecionados</h1>
               <div className="flex items-center gap-4">
                 {/* Toggle de Visualização */}
                 <div className="flex items-center space-x-3">
@@ -129,14 +109,6 @@ const ClientsMicrofrontend: React.FC = () => {
                     <span>Cards</span>
                   </div>
                 </div>
-                
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition-all duration-200 font-medium"
-                  style={{ backgroundColor: '#EC6724' }}
-                >
-                  Adicionar Cliente
-                </button>
               </div>
             </div>
           </div>
@@ -166,7 +138,7 @@ const ClientsMicrofrontend: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={editingClient ? 'Editar Cliente' : 'Cadastrar Cliente'}
+        title="Editar Cliente"
         size="lg"
       >
         <ClientForm
@@ -174,16 +146,8 @@ const ClientsMicrofrontend: React.FC = () => {
             onClose={handleCloseModal}
         />
       </Modal>
-
-      <SelectedClientsModal
-        isOpen={isSelectedClientsModalOpen}
-        onClose={handleCloseSelectedClientsModal}
-        selectedClientIds={selectedClients}
-        onEdit={handleEditFromSelected}
-        onView={handleViewFromSelected}
-      />
     </div>
   );
 };
 
-export default ClientsMicrofrontend;
+export default SelectedClientsMicrofrontend;

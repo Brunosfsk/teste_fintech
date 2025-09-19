@@ -14,11 +14,11 @@ const ClientDetailMicrofrontend: React.FC = () => {
     return null;
   }
 
-  const client = id ? getClientById(id) : null;
+  const client = id ? getClientById(parseInt(id)) : null;
 
   if (!client) {
     return (
-      <div className="min-h-screen p-5" style={{backgroundColor: '#5459AC'}}>
+      <div className="min-h-screen p-5" style={{backgroundColor: '#f5f5f5'}}>
         <div className="card animate-fade-in">
           <div className="text-center py-12">
             <div className="text-6xl mb-4">😕</div>
@@ -45,15 +45,16 @@ const ClientDetailMicrofrontend: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-5" style={{backgroundColor: '#5459AC'}}>
+    <div className="min-h-screen p-5" style={{backgroundColor: '#f5f5f5'}}>
       <div className="w-full max-w-none xl:max-w-[80%] mx-auto">
         <div className="card mb-8 animate-fade-in">
           <div className="flex justify-between items-center flex-wrap gap-4">
-            <h1 className="text-2xl font-bold text-gray-900">Detalhes do Cliente</h1>
+            <h1 className="text-2xl font-bold" style={{ color: '#EC6724' }}>Detalhes do Cliente</h1>
             <div className="flex gap-3">
               <button 
                 onClick={handleEdit}
-                className="btn-primary"
+                className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition-all duration-200 font-medium"
+                style={{ backgroundColor: '#EC6724' }}
               >
                 Editar Cliente
               </button>
@@ -67,87 +68,36 @@ const ClientDetailMicrofrontend: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="card animate-slide-up">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-3 border-b-2 border-primary-500">
-              Informações Pessoais
-            </h2>
-            <div className="space-y-4">
-              <div className="info-item">
-                <span className="info-label">Nome:</span>
-                <span className="info-value">{client.name}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Email:</span>
-                <span className="info-value">{client.email}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Telefone:</span>
-                <span className="info-value">{client.phone}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">CPF:</span>
-                <span className="info-value">{client.cpf}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="card animate-slide-up">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-3 border-b-2 border-primary-500">
-              Endereço
-            </h2>
-            <div className="space-y-4">
-              <div className="info-item">
-                <span className="info-label">CEP:</span>
-                <span className="info-value">{client.address.cep}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Rua:</span>
-                <span className="info-value">{client.address.street}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Número:</span>
-                <span className="info-value">{client.address.number}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Complemento:</span>
-                <span className="info-value">{client.address.complement || 'N/A'}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Bairro:</span>
-                <span className="info-value">{client.address.neighborhood}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Cidade:</span>
-                <span className="info-value">{client.address.city}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Estado:</span>
-                <span className="info-value">{client.address.state}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="card mt-8 animate-slide-up">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-3 border-b-2 border-primary-500">
-            Informações Adicionais
-          </h2>
+        <div className="bg-white rounded-lg shadow-md p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="info-item">
-              <span className="info-label">Data de Nascimento:</span>
-              <span className="info-value">
-                {new Date(client.birthDate).toLocaleDateString('pt-BR')}
-              </span>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">ID</label>
+              <p className="text-gray-900">{client.id}</p>
             </div>
-            <div className="info-item">
-              <span className="info-label">Renda Mensal:</span>
-              <span className="info-value">
-                {new Intl.NumberFormat('pt-BR', {
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <p className="text-gray-900">{client.name}</p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Avaliação da Empresa</label>
+              <p className="text-gray-900">
+                {client.companyValuation ? new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'
-                }).format(client.monthlyIncome || 0)}
-              </span>
+                }).format(client.companyValuation) : 'Não informado'}
+              </p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data de Criação</label>
+              <p className="text-gray-900">{new Date(client.createdAt).toLocaleDateString('pt-BR')}</p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Última Atualização</label>
+              <p className="text-gray-900">{new Date(client.updatedAt).toLocaleDateString('pt-BR')}</p>
             </div>
           </div>
         </div>

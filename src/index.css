@@ -10,7 +10,7 @@
   }
   
   body {
-    background-color: #5459AC;
+    background-color: #f5f5f5;
     @apply text-gray-900 antialiased;
   }
   
@@ -21,8 +21,8 @@
 
 @layer components {
   .btn-primary {
-    background: linear-gradient(135deg, #4c1d95 0%, #2d1b3d 50%, #000000 100%);
-    @apply text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none;
+    @apply text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed;
+    background-color: #EC6724;
   }
   
   .btn-secondary {
@@ -34,7 +34,12 @@
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+    @apply w-full px-3 py-2 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:ring-1;
+  }
+  
+  .input-field:focus {
+    border-color: #EC6724;
+    --tw-ring-color: #EC6724;
   }
   
   .input-error {
@@ -46,26 +51,18 @@
   }
   
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-primary-200;
+    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+    border-color: #EC6724;
+  }
+
+  .form-input {
+    @apply w-full px-3 py-2 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:ring-1;
   }
   
-  /* Gradient backgrounds */
-  .gradient-dark {
-    background: linear-gradient(135deg, #4c1d95 0%, #1a0d1f 50%, #000000 100%);
+  .form-input:focus {
+    border-color: #EC6724;
+    --tw-ring-color: #EC6724;
   }
-
-  .gradient-purple-black {
-    background: linear-gradient(to bottom, #6b21a8, #2d1b3d, #000000);
-  }
-
-  .gradient-header {
-     background: linear-gradient(90deg, #4c1d95 0%, #2d1b3d 50%, #1a0d1f 100%);
-   }
-
-   /* Form styles */
-   .form-input {
-     @apply w-full px-3 py-2 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
-   }
   
   .form-error {
     @apply text-red-500 text-xs mt-1 block;
@@ -73,11 +70,6 @@
 }
 
 @layer utilities {
-  .text-gradient {
-    background: linear-gradient(135deg, #4c1d95 0%, #2d1b3d 50%, #000000 100%);
-    @apply bg-clip-text text-transparent;
-  }
-  
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
   }

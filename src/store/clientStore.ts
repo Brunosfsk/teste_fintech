@@ -1,62 +1,72 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Client, ClientFormData } from '../types/Client';
+import { Client } from '../types/Client';
 
-interface ClientState {
+interface ClientStore {
   clients: Client[];
-  addClient: (clientData: ClientFormData) => void;
-  updateClient: (id: string, clientData: ClientFormData) => void;
-  deleteClient: (id: string) => void;
-  getClientById: (id: string) => Client | undefined;
+  totalClients: number;
+  currentPage: number;
+  totalPages: number;
+  isLoading: boolean;
+  error: string | null;
+  
+  // Actions
+  setClients: (clients: Client[]) => void;
+  setPagination: (pagination: { totalClients: number; currentPage: number; totalPages: number }) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  addClient: (client: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  updateClient: (id: number, client: Partial<Client>) => void;
+  deleteClient: (id: number) => void;
+  getClientById: (id: number) => Client | undefined;
 }
 
-const generateId = (): string => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
+export const useClientStore = create<ClientStore>((set, get) => ({
+  clients: [],
+  totalClients: 0,
+  currentPage: 1,
+  totalPages: 1,
+  isLoading: false,
+  error: null,
 
-export const useClientStore = create<ClientState>()(
-  persist(
-    (set, get) => ({
-      clients: [],
-      
-      addClient: (clientData: ClientFormData) => {
-        const newClient: Client = {
-          id: generateId(),
-          ...clientData,
-          createdAt: new Date().toISOString(),
-        };
-        
-        set((state) => ({
-          clients: [...state.clients, newClient]
-        }));
-      },
-      
-      updateClient: (id: string, clientData: ClientFormData) => {
-        set((state) => ({
-          clients: state.clients.map((client) =>
-            client.id === id
-              ? {
-                  ...client,
-                  ...clientData,
-                  updatedAt: new Date().toISOString(),
-                }
-              : client
-          )
-        }));
-      },
-      
-      deleteClient: (id: string) => {
-        set((state) => ({
-          clients: state.clients.filter((client) => client.id !== id)
-        }));
-      },
-      
-      getClientById: (id: string) => {
-        return get().clients.find((client) => client.id === id);
-      },
-    }),
-    {
-      name: 'clients-storage',
-    }
-  )
-);
+  setClients: (clients) => set({ clients }),
+  
+  setPagination: (pagination) => set(pagination),
+  
+  setLoading: (isLoading) => set({ isLoading }),
+  
+  setError: (error) => set({ error }),
+
+  addClient: (clientData) => {
+    const newClient: Client = {
+      ...clientData,
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    set((state) => ({
+      clients: [...state.clients, newClient],
+      totalClients: state.totalClients + 1,
+    }));
+  },
+
+  updateClient: (id, updatedData) => {
+    set((state) => ({
+      clients: state.clients.map((client) =>
+        client.id === id
+          ? { ...client, ...updatedData, updatedAt: new Date().toISOString() }
+          : client
+      ),
+    }));
+  },
+
+  deleteClient: (id) => {
+    set((state) => ({
+      clients: state.clients.filter((client) => client.id !== id),
+      totalClients: state.totalClients - 1,
+    }));
+  },
+
+  getClientById: (id) => {
+    return get().clients.find((client) => client.id === id);
+  },
+}));

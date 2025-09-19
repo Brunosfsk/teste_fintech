@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthMicrofrontend } from './microfrontends/auth';
 import { ClientsMicrofrontend } from './microfrontends/clients';
 import { ClientDetailMicrofrontend } from './microfrontends/client-detail';
+import SelectedClientsMicrofrontend from './microfrontends/selected-clients';
 import { useUserStore } from './store/userStore';
 
 const App: React.FC = () => {
@@ -15,6 +16,10 @@ const App: React.FC = () => {
         <Route 
           path="/clientes" 
           element={user ? <ClientsMicrofrontend /> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/clientes-selecionados" 
+          element={user ? <SelectedClientsMicrofrontend /> : <Navigate to="/" />} 
         />
         <Route 
           path="/cliente/:id" 

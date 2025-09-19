@@ -1,35 +1,25 @@
-export interface Address {
-  street: string;
-  number: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  zipCode?: string;
-  cep: string;
-  complement?: string;
-}
-
 export interface Client {
-  id: string;
+  id: number;
   name: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  birthDate: string;
-  monthlyIncome?: number;
-  address: Address;
-  notes?: string;
+  salary: number;
+  companyValuation: number;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
 }
 
 export interface ClientFormData {
   name: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  birthDate: string;
-  monthlyIncome?: number;
-  address: Address;
-  notes?: string;
+  salary: number;
+  companyValuation: number;
+}
+
+export interface PaginatedResponse<T> {
+  clients: T[];
+  totalPages: number;
+  currentPage: number;
+}
+
+export interface PaginationParams {
+  page: number;
+  limit: number;
 }

@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { useClientStore } from '../../../store/clientStore';
 import { Client } from '../../../types/Client';
+import Pagination from '../../../components/Pagination';
 
 interface ClientTableProps {
   onEdit: (client: Client) => void;
   onView: (client: Client) => void;
-  selectedClients: string[];
-  onSelectionChange: (selectedIds: string[]) => void;
+  selectedClients: number[];
+  onSelectionChange: (selectedIds: number[]) => void;
+  onPageChange: (page: number) => void;
 }
 
 const ClientTable: React.FC<ClientTableProps> = ({ 
   onEdit, 
   onView, 
   selectedClients, 
-  onSelectionChange 
+  onSelectionChange,
+  onPageChange
 }) => {
-  const { clients, deleteClient } = useClientStore();
+  const { clients, deleteClient, totalPages, currentPage, isLoading } = useClientStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.phone.includes(searchTerm) ||
-    client.cpf.includes(searchTerm)
+    client.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     if (window.confirm('Tem certeza que deseja excluir este cliente?')) {
       deleteClient(id);
       // Remove from selection if was selected
@@ -43,7 +43,7 @@ const ClientTable: React.FC<ClientTableProps> = ({
     }
   };
 
-  const handleSelectClient = (clientId: string, checked: boolean) => {
+  const handleSelectClient = (clientId: number, checked: boolean) => {
     if (checked) {
       onSelectionChange([...selectedClients, clientId]);
     } else {
@@ -76,15 +76,16 @@ const ClientTable: React.FC<ClientTableProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-6">
       {/* Search Bar */}
       <div className="flex gap-4 items-center">
         <input
           type="text"
-          placeholder="Buscar clientes por nome, email, telefone ou CPF..."
+          placeholder="Buscar clientes por nome, email ou telefone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 p-3 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:border-primary-500"
+          className="flex-1 p-3 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none"
+          style={{ borderColor: '#EC6724' }}
         />
         {selectedClients.length > 0 && (
           <div className="text-sm text-gray-600">
@@ -111,26 +112,24 @@ const ClientTable: React.FC<ClientTableProps> = ({
                       if (input) input.indeterminate = isIndeterminate;
                     }}
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded border-gray-300"
+                    style={{ accentColor: '#EC6724' }}
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Nome
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
+                  Avaliação da Empresa
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Telefone
+                  Salário
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  CPF
+                  Data Criação
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Renda Mensal
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cidade
+                  Última Atualização
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
@@ -145,32 +144,31 @@ const ClientTable: React.FC<ClientTableProps> = ({
                       type="checkbox"
                       checked={selectedClients.includes(client.id)}
                       onChange={(e) => handleSelectClient(client.id, e.target.checked)}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                      className="h-4 w-4 rounded border-gray-300"
+                      style={{ accentColor: '#EC6724' }}
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{client.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{client.email}</div>
+                    <div className="text-sm text-gray-900">{client.companyValuation ? formatCurrency(client.companyValuation) : 'Não informado'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{client.phone}</div>
+                    <div className="text-sm text-gray-900">{new Date(client.createdAt).toLocaleDateString('pt-BR')}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{client.cpf}</div>
+                    <div className="text-sm text-gray-900">{new Date(client.updatedAt).toLocaleDateString('pt-BR')}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{formatCurrency(client.monthlyIncome)}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{client.address.city}, {client.address.state}</div>
+                    <div className="text-sm text-gray-900">{client.salary ? formatCurrency(client.salary) : 'Não informado'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
                       <button
                         onClick={() => onView(client)}
-                        className="text-primary-600 hover:text-primary-900 transition-colors"
+                        className="hover:opacity-80 transition-colors"
+                        style={{ color: '#EC6724' }}
                         title="Visualizar"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,6 +202,13 @@ const ClientTable: React.FC<ClientTableProps> = ({
           </table>
         </div>
       )}
+      
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        loading={isLoading}
+      />
     </div>
   );
 };

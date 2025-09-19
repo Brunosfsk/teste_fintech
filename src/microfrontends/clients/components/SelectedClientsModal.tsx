@@ -5,9 +5,9 @@ import Modal from './Modal';
 interface SelectedClientsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedClientIds: string[];
-  onEdit: (clientId: string) => void;
-  onView: (clientId: string) => void;
+  selectedClientIds: number[];
+  onEdit: (clientId: number) => void;
+  onView: (clientId: number) => void;
 }
 
 const SelectedClientsModal: React.FC<SelectedClientsModalProps> = ({
@@ -52,28 +52,27 @@ const SelectedClientsModal: React.FC<SelectedClientsModalProps> = ({
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 mb-2">{client.name}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium">Email:</span> {client.email}
-                    </div>
-                    <div>
-                      <span className="font-medium">Telefone:</span> {client.phone}
+                      <span className="font-medium">Avaliação da Empresa:</span> {client.companyValuation ? formatCurrency(client.companyValuation) : 'Não informado'}
                     </div>
                     <div>
-                      <span className="font-medium">CPF:</span> {client.cpf}
+                      <span className="font-medium">Data Criação:</span> {new Date(client.createdAt).toLocaleDateString('pt-BR')}
                     </div>
                     <div>
-                      <span className="font-medium">Renda:</span> {formatCurrency(client.monthlyIncome || 0)}
+                      <span className="font-medium">Última Atualização:</span> {new Date(client.updatedAt).toLocaleDateString('pt-BR')}
                     </div>
-                    <div className="md:col-span-2">
-                      <span className="font-medium">Endereço:</span> {client.address.street}, {client.address.number} - {client.address.city}, {client.address.state}
-                    </div>
+                  </div>
+                  
+                  <div className="mt-4 text-sm">
+                    <span className="font-medium">ID:</span> {client.id}
                   </div>
                 </div>
                 <div className="flex gap-2 ml-4">
                   <button
                     onClick={() => onView(client.id)}
-                    className="text-primary-600 hover:text-primary-800 text-sm font-medium"
+                    className="text-sm font-medium"
+                style={{ color: '#EC6724' }}
                   >
                     Ver
                   </button>
@@ -95,8 +94,8 @@ const SelectedClientsModal: React.FC<SelectedClientsModalProps> = ({
           <div className="flex justify-between items-center text-sm text-gray-600">
             <span>Total de clientes selecionados: {selectedClients.length}</span>
             <span>
-              Renda total: {formatCurrency(
-                selectedClients.reduce((total, client) => total + (client.monthlyIncome || 0), 0)
+              Salário total: {formatCurrency(
+                selectedClients.reduce((total, client) => total + (client.salary || 0), 0)
               )}
             </span>
           </div>
