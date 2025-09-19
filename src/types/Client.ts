@@ -4,8 +4,8 @@ export interface Address {
   neighborhood: string;
   city: string;
   state: string;
-  zipCode: string;
-  cep?: string;
+  zipCode?: string;
+  cep: string;
   complement?: string;
 }
 

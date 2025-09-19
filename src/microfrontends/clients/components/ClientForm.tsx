@@ -95,11 +95,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ editingClient, onCancel, onSucc
       newErrors.birthDate = 'Data de nascimento é obrigatória';
     }
 
-    if (formData.monthlyIncome <= 0) {
+    if (formData.monthlyIncome && formData.monthlyIncome <= 0) {
       newErrors.monthlyIncome = 'Renda mensal deve ser maior que zero';
     }
 
-    if (!formData.address.cep.trim()) {
+    if (!formData.address.cep || !formData.address.cep.trim()) {
       newErrors.cep = 'CEP é obrigatório';
     }
 

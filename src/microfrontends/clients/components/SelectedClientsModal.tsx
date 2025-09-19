@@ -63,7 +63,7 @@ const SelectedClientsModal: React.FC<SelectedClientsModalProps> = ({
                       <span className="font-medium">CPF:</span> {client.cpf}
                     </div>
                     <div>
-                      <span className="font-medium">Renda:</span> {formatCurrency(client.monthlyIncome)}
+                      <span className="font-medium">Renda:</span> {formatCurrency(client.monthlyIncome || 0)}
                     </div>
                     <div className="md:col-span-2">
                       <span className="font-medium">Endereço:</span> {client.address.street}, {client.address.number} - {client.address.city}, {client.address.state}
@@ -96,7 +96,7 @@ const SelectedClientsModal: React.FC<SelectedClientsModalProps> = ({
             <span>Total de clientes selecionados: {selectedClients.length}</span>
             <span>
               Renda total: {formatCurrency(
-                selectedClients.reduce((total, client) => total + client.monthlyIncome, 0)
+                selectedClients.reduce((total, client) => total + (client.monthlyIncome || 0), 0)
               )}
             </span>
           </div>

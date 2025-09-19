@@ -28,11 +28,6 @@ const ClientsMicrofrontend: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleCancelEdit = () => {
-    setEditingClient(null);
-    setIsModalOpen(false);
-  };
-
   const handleOpenModal = () => {
     setEditingClient(null);
     setIsModalOpen(true);
@@ -143,7 +138,7 @@ const ClientsMicrofrontend: React.FC = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={editingClient ? 'Editar Cliente' : 'Cadastrar Cliente'}
-        size="large"
+        size="lg"
       >
         <ClientForm 
           editingClient={editingClient}

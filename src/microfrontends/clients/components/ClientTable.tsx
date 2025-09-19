@@ -59,10 +59,6 @@ const ClientTable: React.FC<ClientTableProps> = ({
     }).format(value);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
   const isAllSelected = filteredClients.length > 0 && 
     filteredClients.every(client => selectedClients.includes(client.id));
   

@@ -146,7 +146,7 @@ const ClientDetailMicrofrontend: React.FC = () => {
                 {new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'
-                }).format(client.monthlyIncome)}
+                }).format(client.monthlyIncome || 0)}
               </span>
             </div>
           </div>
