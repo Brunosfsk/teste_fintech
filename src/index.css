@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+  }
+  
+  body {
+    background-color: #5459AC;
+    @apply text-gray-900 antialiased;
+  }
+  
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    background: linear-gradient(135deg, #4c1d95 0%, #2d1b3d 50%, #000000 100%);
+    @apply text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+  }
+  
+  .btn-danger {
+    @apply bg-red-500 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+  }
+  
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-primary-200;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-dark {
+    background: linear-gradient(135deg, #4c1d95 0%, #1a0d1f 50%, #000000 100%);
+  }
+
+  .gradient-purple-black {
+    background: linear-gradient(to bottom, #6b21a8, #2d1b3d, #000000);
+  }
+
+  .gradient-header {
+     background: linear-gradient(90deg, #4c1d95 0%, #2d1b3d 50%, #1a0d1f 100%);
+   }
+
+   /* Form styles */
+   .form-input {
+     @apply w-full px-3 py-2 border-2 border-gray-200 rounded-md text-sm transition-colors duration-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+   }
+  
+  .form-error {
+    @apply text-red-500 text-xs mt-1 block;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #4c1d95 0%, #2d1b3d 50%, #000000 100%);
+    @apply bg-clip-text text-transparent;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
