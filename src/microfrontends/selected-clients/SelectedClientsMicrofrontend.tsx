@@ -1,51 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
+import { useSelectedClientsStore } from '../../store/selectedClientsStore';
 import { useClientStore } from '../../store/clientStore';
-import { useClientApi } from '../../hooks/useClientApi';
 import { Client } from '../../types/Client';
 import ClientForm from '../clients/components/ClientForm';
-import ClientTable from '../clients/components/ClientTable';
-import ClientCards from '../clients/components/ClientCards';
+import SelectedClientTable from './components/SelectedClientTable';
+import SelectedClientCards from './components/SelectedClientCards';
 import Modal from '../clients/components/Modal';
+import ConfirmDeleteModal from '../clients/components/ConfirmDeleteModal';
 import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
 
 const SelectedClientsMicrofrontend: React.FC = () => {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
-  const { currentPage, setClients, setPagination, setLoading, setError } = useClientStore();
-  const { getClients } = useClientApi();
+  const { selectedClients, removeSelectedClient, clearSelectedClients } = useSelectedClientsStore();
+  const { deleteClient } = useClientStore();
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClients, setSelectedClients] = useState<number[]>([]);
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    loadClients(currentPage);
-  }, []);
-
-  const loadClients = async (page: number) => {
-    try {
-      setLoading(true);
-      const response = await getClients({ page, limit: 12 });
-      if (response) {
-        setClients(response.clients);
-        setPagination({
-          totalClients: response.clients.length,
-          currentPage: response.currentPage,
-          totalPages: response.totalPages
-        });
-      }
-    } catch (error) {
-      setError('Erro ao carregar clientes');
-      console.error('Erro ao carregar clientes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    loadClients(page);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleEditClient = (client: Client) => {
@@ -59,11 +39,39 @@ const SelectedClientsMicrofrontend: React.FC = () => {
   };
 
   const handleSelectionChange = (selectedIds: number[]) => {
-    setSelectedClients(selectedIds);
+    // Remover clientes que foram desmarcados
+    selectedClients.forEach(client => {
+      if (!selectedIds.includes(client.id)) {
+        removeSelectedClient(client.id);
+      }
+    });
   };
 
   const handleViewClient = (client: Client) => {
     navigate(`/cliente/${client.id}`);
+  };
+
+  const handleDeleteClient = (client: Client) => {
+    setClientToDelete(client);
+    setIsConfirmDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (clientToDelete) {
+      deleteClient(clientToDelete.id);
+      removeSelectedClient(clientToDelete.id);
+      setClientToDelete(null);
+      setIsConfirmDeleteOpen(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setClientToDelete(null);
+    setIsConfirmDeleteOpen(false);
+  };
+
+  const handleClearSelected = () => {
+    clearSelectedClients();
   };
 
   if (!user) {
@@ -73,14 +81,27 @@ const SelectedClientsMicrofrontend: React.FC = () => {
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
-      <Sidebar selectedClientsCount={selectedClients.length} />
+      <Header onMenuToggle={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+      <Sidebar selectedClientsCount={selectedClients.length} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <div className="flex-1 ml-48">
+      <div className={`flex-1 pt-24 transition-all duration-300 ease-in-out ${
+        isSidebarOpen ? 'md:ml-64 ml-0 opacity-75' : 'ml-0 opacity-100'
+      }`}>
         <div className="w-full max-w-none xl:max-w-[80%] mx-auto p-5">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
             <div className="flex justify-between items-center flex-wrap gap-4">
               <h1 className="text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes Selecionados</h1>
               <div className="flex items-center gap-4">
+                {/* Botão Limpar Selecionados */}
+                {selectedClients.length > 0 && (
+                  <button
+                    onClick={handleClearSelected}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium"
+                  >
+                    Limpar Selecionados
+                  </button>
+                )}
+                
                 {/* Toggle de Visualização */}
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Visualização:</span>
@@ -115,20 +136,22 @@ const SelectedClientsMicrofrontend: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow-md animate-fade-in">
             {viewMode === 'table' ? (
-              <ClientTable 
+              <SelectedClientTable 
+                clients={selectedClients}
                 onEdit={handleEditClient}
                 onView={handleViewClient}
-                selectedClients={selectedClients}
+                onDelete={handleDeleteClient}
+                selectedClients={selectedClients.map(client => client.id)}
                 onSelectionChange={handleSelectionChange}
-                onPageChange={handlePageChange}
               />
             ) : (
-              <ClientCards 
+              <SelectedClientCards 
+                clients={selectedClients}
                 onEdit={handleEditClient}
                 onView={handleViewClient}
-                selectedClients={selectedClients}
+                onDelete={handleDeleteClient}
+                selectedClients={selectedClients.map(client => client.id)}
                 onSelectionChange={handleSelectionChange}
-                onPageChange={handlePageChange}
               />
             )}
           </div>
@@ -139,13 +162,20 @@ const SelectedClientsMicrofrontend: React.FC = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title="Editar Cliente"
-        size="lg"
+        size="md"
       >
         <ClientForm
             client={editingClient}
             onClose={handleCloseModal}
         />
       </Modal>
+
+      <ConfirmDeleteModal
+        isOpen={isConfirmDeleteOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        clientName={clientToDelete?.name || ''}
+      />
     </div>
   );
 };

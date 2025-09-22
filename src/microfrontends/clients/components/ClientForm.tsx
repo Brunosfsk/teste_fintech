@@ -93,65 +93,63 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Nome */}
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-            Nome *
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
-              errors.name ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Digite o nome completo"
-          />
-          {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Nome */}
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+          Nome *
+        </label>
+        <input
+          type="text"
+          id="name"
+          value={formData.name}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+            errors.name ? 'border-red-500' : 'border-gray-300'
+          }`}
+          placeholder="Digite o nome completo"
+        />
+        {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+      </div>
 
-        {/* Salário */}
-        <div>
-          <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-2">
-            Salário *
-          </label>
-          <input
-            type="number"
-            id="salary"
-            value={formData.salary || ''}
-            onChange={(e) => handleInputChange('salary', parseFloat(e.target.value) || 0)}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
-              errors.salary ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Digite o salário"
-            min="0"
-            step="0.01"
-          />
-          {errors.salary && <p className="mt-1 text-sm text-red-600">{errors.salary}</p>}
-        </div>
+      {/* Salário */}
+      <div>
+        <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-2">
+          Salário *
+        </label>
+        <input
+          type="number"
+          id="salary"
+          value={formData.salary || ''}
+          onChange={(e) => handleInputChange('salary', parseFloat(e.target.value) || 0)}
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+            errors.salary ? 'border-red-500' : 'border-gray-300'
+          }`}
+          placeholder="Digite o salário"
+          min="0"
+          step="0.01"
+        />
+        {errors.salary && <p className="mt-1 text-sm text-red-600">{errors.salary}</p>}
+      </div>
 
-        {/* Avaliação da Empresa */}
-        <div>
-          <label htmlFor="companyValuation" className="block text-sm font-medium text-gray-700 mb-2">
-            Avaliação da Empresa
-          </label>
-          <input
-            type="number"
-            id="companyValuation"
-            value={formData.companyValuation || ''}
-            onChange={(e) => handleInputChange('companyValuation', parseFloat(e.target.value) || 0)}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
-              errors.companyValuation ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Digite a avaliação da empresa"
-            min="0"
-            step="0.01"
-          />
-          {errors.companyValuation && <p className="mt-1 text-sm text-red-600">{errors.companyValuation}</p>}
-        </div>
+      {/* Avaliação da Empresa */}
+      <div>
+        <label htmlFor="companyValuation" className="block text-sm font-medium text-gray-700 mb-2">
+          Avaliação da Empresa
+        </label>
+        <input
+          type="number"
+          id="companyValuation"
+          value={formData.companyValuation || ''}
+          onChange={(e) => handleInputChange('companyValuation', parseFloat(e.target.value) || 0)}
+          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+            errors.companyValuation ? 'border-red-500' : 'border-gray-300'
+          }`}
+          placeholder="Digite a avaliação da empresa"
+          min="0"
+          step="0.01"
+        />
+        {errors.companyValuation && <p className="mt-1 text-sm text-red-600">{errors.companyValuation}</p>}
       </div>
 
       {/* Botões */}

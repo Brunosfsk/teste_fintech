@@ -38,10 +38,11 @@ const Modal: React.FC<ModalProps> = ({
   return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div 
-          className={`bg-white rounded-lg shadow-xl w-full max-w-[90%] xl:max-w-[70%] max-h-[90vh] overflow-y-auto ${
+          className={`bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-y-auto ${
         size === 'sm' ? 'max-w-md' :
-        size === 'md' ? 'max-w-2xl xl:max-w-[60%]' :
-        'max-w-[90%] xl:max-w-[70%]'
+        size === 'md' ? 'max-w-lg' :
+        size === 'lg' ? 'max-w-xl' :
+        'max-w-2xl'
           }`}
           onClick={(e) => e.stopPropagation()}
         >

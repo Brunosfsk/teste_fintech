@@ -10,6 +10,8 @@ import ClientCards from './components/ClientCards';
 import Modal from './components/Modal';
 import SelectedClientsModal from './components/SelectedClientsModal';
 import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
+import { useSelectedClientsStore } from '../../store/selectedClientsStore';
 
 const ClientsMicrofrontend: React.FC = () => {
   const navigate = useNavigate();
@@ -18,9 +20,16 @@ const ClientsMicrofrontend: React.FC = () => {
   const { getClients } = useClientApi();
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClients, setSelectedClients] = useState<number[]>([]);
   const [isSelectedClientsModalOpen, setIsSelectedClientsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Usando o store de clientes selecionados
+  const { selectedClients, addSelectedClient, removeSelectedClient, isClientSelected } = useSelectedClientsStore();
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   useEffect(() => {
     loadClients(currentPage);
@@ -29,7 +38,7 @@ const ClientsMicrofrontend: React.FC = () => {
   const loadClients = async (page: number) => {
     try {
       setLoading(true);
-      const response = await getClients({ page, limit: 12 });
+      const response = await getClients({ page, limit: 16 });
       if (response) {
         setClients(response.clients);
         setPagination({
@@ -61,7 +70,25 @@ const ClientsMicrofrontend: React.FC = () => {
   };
 
   const handleSelectionChange = (selectedIds: number[]) => {
-    setSelectedClients(selectedIds);
+    // Atualizar o store baseado na seleção atual
+    const currentSelectedIds = selectedClients.map(client => client.id);
+    
+    // Adicionar novos clientes selecionados
+    selectedIds.forEach(id => {
+      if (!currentSelectedIds.includes(id)) {
+        const client = clients.find(c => c.id === id);
+        if (client) {
+          addSelectedClient(client);
+        }
+      }
+    });
+    
+    // Remover clientes desmarcados
+    currentSelectedIds.forEach(id => {
+      if (!selectedIds.includes(id)) {
+        removeSelectedClient(id);
+      }
+    });
   };
 
   const handleViewClient = (client: Client) => {
@@ -93,9 +120,12 @@ const ClientsMicrofrontend: React.FC = () => {
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
-      <Sidebar selectedClientsCount={selectedClients.length} />
+      <Header onMenuToggle={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+      <Sidebar selectedClientsCount={selectedClients.length} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <div className="flex-1 ml-48">
+      <div className={`flex-1 pt-24 transition-all duration-300 ease-in-out ${
+        isSidebarOpen ? 'md:ml-64 ml-0 opacity-75' : 'ml-0 opacity-100'
+      }`}>
         <div className="w-full max-w-none xl:max-w-[80%] mx-auto p-5">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
             <div className="flex justify-between items-center flex-wrap gap-4">
@@ -146,7 +176,7 @@ const ClientsMicrofrontend: React.FC = () => {
               <ClientTable 
                 onEdit={handleEditClient}
                 onView={handleViewClient}
-                selectedClients={selectedClients}
+                selectedClients={selectedClients.map(client => client.id)}
                 onSelectionChange={handleSelectionChange}
                 onPageChange={handlePageChange}
               />
@@ -154,7 +184,7 @@ const ClientsMicrofrontend: React.FC = () => {
               <ClientCards 
                 onEdit={handleEditClient}
                 onView={handleViewClient}
-                selectedClients={selectedClients}
+                selectedClients={selectedClients.map(client => client.id)}
                 onSelectionChange={handleSelectionChange}
                 onPageChange={handlePageChange}
               />
@@ -167,7 +197,7 @@ const ClientsMicrofrontend: React.FC = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={editingClient ? 'Editar Cliente' : 'Cadastrar Cliente'}
-        size="lg"
+        size="md"
       >
         <ClientForm
             client={editingClient}

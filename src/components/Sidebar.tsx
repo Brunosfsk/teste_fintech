@@ -1,11 +1,14 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Logo from '../assets/Logo.png';
 
 interface SidebarProps {
   selectedClientsCount: number;
+  isOpen: boolean;
+  onClose?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ selectedClientsCount }) => {
+const Sidebar: React.FC<SidebarProps> = ({ selectedClientsCount, isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -51,11 +54,23 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedClientsCount }) => {
   };
 
   return (
-    <div className="w-48 bg-white shadow-lg h-screen fixed left-0 top-0 z-10">
+    <>
+      {/* Backdrop/Overlay */}
+       {isOpen && (
+         <div 
+           className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ease-in-out"
+           onClick={onClose}
+         />
+       )}
+      
+      {/* Sidebar */}
+      <div className={`w-64 bg-white shadow-xl h-screen fixed left-0 top-0 z-50 transform transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-bold" style={{ color: '#EC6724' }}>
-          Sistema Fintech
-        </h1>
+        <div className="flex items-center justify-center p-4">
+          <img src={Logo} alt="Logo" className="h-12 w-auto" />
+        </div>
       </div>
       
       <nav className="mt-6">
@@ -91,6 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedClientsCount }) => {
         </ul>
       </nav>
     </div>
+    </>
   );
 };
 
