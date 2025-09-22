@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useClientStore } from '../../../store/clientStore';
+import { useClientApi } from '../../../hooks/useClientApi';
 import { Client } from '../../../types/Client';
 import Pagination from '../../../components/Pagination';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
@@ -10,6 +11,7 @@ interface ClientTableProps {
   selectedClients: number[];
   onSelectionChange: (selectedIds: number[]) => void;
   onPageChange: (page: number) => void;
+  onSuccess?: () => void;
 }
 
 const ClientTable: React.FC<ClientTableProps> = ({ 
@@ -17,9 +19,11 @@ const ClientTable: React.FC<ClientTableProps> = ({
   onView, 
   selectedClients, 
   onSelectionChange,
-  onPageChange
+  onPageChange,
+  onSuccess
 }) => {
-  const { clients, deleteClient, totalPages, currentPage, isLoading } = useClientStore();
+  const { clients, deleteClient: deleteClientFromStore, totalPages, currentPage, isLoading } = useClientStore();
+  const { deleteClient: deleteClientApi } = useClientApi();
   const [searchTerm, setSearchTerm] = useState('');
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
@@ -33,15 +37,22 @@ const ClientTable: React.FC<ClientTableProps> = ({
     setIsConfirmDeleteOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (clientToDelete) {
-      deleteClient(clientToDelete.id);
-      // Remove from selection if was selected
-      if (selectedClients.includes(clientToDelete.id)) {
-        onSelectionChange(selectedClients.filter(clientId => clientId !== clientToDelete.id));
+      try {
+        await deleteClientApi(clientToDelete.id);
+        deleteClientFromStore(clientToDelete.id);
+        // Remove from selection if was selected
+        if (selectedClients.includes(clientToDelete.id)) {
+          onSelectionChange(selectedClients.filter(clientId => clientId !== clientToDelete.id));
+        }
+        onSuccess?.();
+      } catch (error) {
+        console.error('Erro ao deletar cliente:', error);
+      } finally {
+        setClientToDelete(null);
+        setIsConfirmDeleteOpen(false);
       }
-      setClientToDelete(null);
-      setIsConfirmDeleteOpen(false);
     }
   };
 

@@ -69,6 +69,10 @@ const ClientsMicrofrontend: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const handleSuccess = () => {
+    loadClients(currentPage);
+  };
+
   const handleSelectionChange = (selectedIds: number[]) => {
     const currentSelectedIds = selectedClients.map(client => client.id);
     
@@ -176,6 +180,7 @@ const ClientsMicrofrontend: React.FC = () => {
                 selectedClients={selectedClients.map(client => client.id)}
                 onSelectionChange={handleSelectionChange}
                 onPageChange={handlePageChange}
+                onSuccess={handleSuccess}
               />
             ) : (
               <ClientCards 
@@ -184,6 +189,7 @@ const ClientsMicrofrontend: React.FC = () => {
                 selectedClients={selectedClients.map(client => client.id)}
                 onSelectionChange={handleSelectionChange}
                 onPageChange={handlePageChange}
+                onSuccess={handleSuccess}
               />
             )}
           </div>
@@ -199,6 +205,7 @@ const ClientsMicrofrontend: React.FC = () => {
         <ClientForm
             client={editingClient}
             onClose={handleCloseModal}
+            onSuccess={handleSuccess}
         />
       </Modal>
 
