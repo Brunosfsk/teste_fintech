@@ -25,7 +25,7 @@ const ClientsMicrofrontend: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Usando o store de clientes selecionados
-  const { selectedClients, addSelectedClient, removeSelectedClient, isClientSelected } = useSelectedClientsStore();
+  const { selectedClients, addSelectedClient, removeSelectedClient } = useSelectedClientsStore();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -70,10 +70,8 @@ const ClientsMicrofrontend: React.FC = () => {
   };
 
   const handleSelectionChange = (selectedIds: number[]) => {
-    // Atualizar o store baseado na seleção atual
     const currentSelectedIds = selectedClients.map(client => client.id);
     
-    // Adicionar novos clientes selecionados
     selectedIds.forEach(id => {
       if (!currentSelectedIds.includes(id)) {
         const client = clients.find(c => c.id === id);
@@ -83,7 +81,6 @@ const ClientsMicrofrontend: React.FC = () => {
       }
     });
     
-    // Remover clientes desmarcados
     currentSelectedIds.forEach(id => {
       if (!selectedIds.includes(id)) {
         removeSelectedClient(id);
@@ -208,7 +205,7 @@ const ClientsMicrofrontend: React.FC = () => {
       <SelectedClientsModal
         isOpen={isSelectedClientsModalOpen}
         onClose={handleCloseSelectedClientsModal}
-        selectedClientIds={selectedClients}
+        selectedClientIds={selectedClients.map(client => client.id)}
         onEdit={handleEditFromSelected}
         onView={handleViewFromSelected}
       />

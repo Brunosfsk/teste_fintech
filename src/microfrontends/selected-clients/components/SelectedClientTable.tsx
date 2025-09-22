@@ -66,7 +66,6 @@ const SelectedClientTable: React.FC<SelectedClientTableProps> = ({
 
   return (
     <div className="flex flex-col gap-4 p-6">
-      {/* Search Bar */}
       <div className="flex gap-4 items-center">
         <input
           type="text"
@@ -126,8 +125,6 @@ const SelectedClientTable: React.FC<SelectedClientTableProps> = ({
                     />
                   </td>
                   <td className="p-4 font-medium text-gray-900">{client.name}</td>
-                  <td className="p-4 text-gray-600">{client.email}</td>
-                  <td className="p-4 text-gray-600">{client.phone}</td>
                   <td className="p-4 text-gray-600">{formatCurrency(client.salary)}</td>
                   <td className="p-4 text-gray-600">{formatCurrency(client.companyValuation)}</td>
                   <td className="p-4">

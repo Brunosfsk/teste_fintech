@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useClientStore } from '../../../store/clientStore';
 import { Client } from '../../../types/Client';
 import Pagination from '../../../components/Pagination';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 interface ClientCardsProps {
   onEdit: (client: Client) => void;
@@ -20,19 +21,33 @@ const ClientCards: React.FC<ClientCardsProps> = ({
 }) => {
   const { clients, deleteClient, totalPages, currentPage, isLoading } = useClientStore();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
 
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (id: number) => {
-    if (window.confirm('Tem certeza que deseja excluir este cliente?')) {
-      deleteClient(id);
+  const handleDelete = (client: Client) => {
+    setClientToDelete(client);
+    setIsConfirmDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (clientToDelete) {
+      deleteClient(clientToDelete.id);
       // Remove from selection if was selected
-      if (selectedClients.includes(id)) {
-        onSelectionChange(selectedClients.filter(clientId => clientId !== id));
+      if (selectedClients.includes(clientToDelete.id)) {
+        onSelectionChange(selectedClients.filter(clientId => clientId !== clientToDelete.id));
       }
+      setClientToDelete(null);
+      setIsConfirmDeleteOpen(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setClientToDelete(null);
+    setIsConfirmDeleteOpen(false);
   };
 
   const handleSelectClient = (clientId: number, checked: boolean) => {
@@ -156,7 +171,7 @@ const ClientCards: React.FC<ClientCardsProps> = ({
                     </svg>
                   </button>
                   <button
-                    onClick={() => handleDelete(client.id)}
+                    onClick={() => handleDelete(client)}
                     className="p-2 text-red-600 hover:text-red-900 transition-colors rounded-full"
                     title="Excluir"
                   >
@@ -176,6 +191,13 @@ const ClientCards: React.FC<ClientCardsProps> = ({
         totalPages={totalPages}
         onPageChange={onPageChange}
         loading={isLoading}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={isConfirmDeleteOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        clientName={clientToDelete?.name || ''}
       />
     </div>
   );

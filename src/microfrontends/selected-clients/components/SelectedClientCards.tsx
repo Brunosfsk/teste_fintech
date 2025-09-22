@@ -51,7 +51,6 @@ const SelectedClientCards: React.FC<SelectedClientCardsProps> = ({
 
   return (
     <div className="flex flex-col gap-4 p-6">
-      {/* Search Bar */}
       <div className="flex gap-4 items-center">
         <input
           type="text"
@@ -95,18 +94,18 @@ const SelectedClientCards: React.FC<SelectedClientCardsProps> = ({
               <div className="mb-12">
                 <h3 className="font-semibold text-gray-900 text-lg mb-2">{client.name}</h3>
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                     </svg>
                     <span>{client.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
+                  </div> */}
+                  {/* <div className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                     <span>{client.phone}</span>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="space-y-2">
@@ -121,7 +120,6 @@ const SelectedClientCards: React.FC<SelectedClientCardsProps> = ({
                 </div>
               </div>
 
-              {/* Checkbox no canto inferior direito */}
               <div className="absolute bottom-4 right-4">
                 <input
                   type="checkbox"
@@ -132,7 +130,6 @@ const SelectedClientCards: React.FC<SelectedClientCardsProps> = ({
                 />
               </div>
 
-              {/* Botões de ação centralizados na parte inferior */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                 <div className="flex gap-2">
                   <button

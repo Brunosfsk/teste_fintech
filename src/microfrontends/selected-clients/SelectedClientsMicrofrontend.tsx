@@ -39,7 +39,6 @@ const SelectedClientsMicrofrontend: React.FC = () => {
   };
 
   const handleSelectionChange = (selectedIds: number[]) => {
-    // Remover clientes que foram desmarcados
     selectedClients.forEach(client => {
       if (!selectedIds.includes(client.id)) {
         removeSelectedClient(client.id);
@@ -102,7 +101,6 @@ const SelectedClientsMicrofrontend: React.FC = () => {
                   </button>
                 )}
                 
-                {/* Toggle de Visualização */}
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Visualização:</span>
                   <div className="relative">
