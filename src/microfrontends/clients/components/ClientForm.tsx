@@ -74,21 +74,19 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onClose, onSuccess }) =
 
     try {
       if (client) {
-        // Editar cliente existente
-        await updateClientApi(client.id, clientData);
-        updateClient(client.id, clientData);
-        onSuccess?.();
+        const updatedClient = await updateClientApi(client.id, clientData);
+        if (updatedClient) {
+          updateClient(client.id, updatedClient);
+          onSuccess?.();
+          onClose();
+        }
       } else {
-        // Criar novo cliente
         const newClient = await createClient(clientData);
         if (newClient) {
           addClient(newClient);
           onSuccess?.();
+          onClose();
         }
-      }
-      
-      if (!error) {
-        onClose();
       }
     } catch (err) {
       console.error('Erro ao salvar cliente:', err);
@@ -111,7 +109,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onClose, onSuccess }) =
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Nome */}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
           Nome *
@@ -129,7 +126,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onClose, onSuccess }) =
         {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
       </div>
 
-      {/* Salário */}
       <div>
         <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-2">
           Salário *
@@ -149,7 +145,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onClose, onSuccess }) =
         {errors.salary && <p className="mt-1 text-sm text-red-600">{errors.salary}</p>}
       </div>
 
-      {/* Avaliação da Empresa */}
       <div>
         <label htmlFor="companyValuation" className="block text-sm font-medium text-gray-700 mb-2">
           Avaliação da Empresa
@@ -169,14 +164,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onClose, onSuccess }) =
         {errors.companyValuation && <p className="mt-1 text-sm text-red-600">{errors.companyValuation}</p>}
       </div>
 
-      {/* Erro da API */}
       {error && (
         <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
           <p className="text-sm">{error}</p>
         </div>
       )}
 
-      {/* Botões */}
       <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
         <button
           type="button"

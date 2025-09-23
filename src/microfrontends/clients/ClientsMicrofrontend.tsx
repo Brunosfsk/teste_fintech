@@ -24,7 +24,6 @@ const ClientsMicrofrontend: React.FC = () => {
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Usando o store de clientes selecionados
   const { selectedClients, addSelectedClient, removeSelectedClient } = useSelectedClientsStore();
 
   const toggleSidebar = () => {
@@ -32,7 +31,6 @@ const ClientsMicrofrontend: React.FC = () => {
   };
 
   useEffect(() => {
-    // Verificar se não há clientes no store ou se é necessário recarregar
     if (clients.length === 0) {
       loadClients(currentPage);
     }
@@ -135,7 +133,6 @@ const ClientsMicrofrontend: React.FC = () => {
             <div className="flex justify-between items-center flex-wrap gap-4">
               <h1 className="text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes</h1>
               <div className="flex items-center gap-4">
-                {/* Toggle de Visualização */}
                 <div className="flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Visualização:</span>
                   <div className="relative">

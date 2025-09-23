@@ -23,10 +23,8 @@ const ClientDetailMicrofrontend: React.FC = () => {
 
       const clientId = parseInt(id);
       
-      // Primeiro, tentar buscar no store local
-      let foundClient = getClientById(clientId);
+      let foundClient: Client | null = getClientById(clientId) || null;
       
-      // Se não encontrar no store e não há clientes carregados, buscar na API
       if (!foundClient && clients.length === 0) {
         try {
           foundClient = await getClientByIdApi(clientId);
@@ -35,7 +33,7 @@ const ClientDetailMicrofrontend: React.FC = () => {
         }
       }
       
-      setClient(foundClient || null);
+      setClient(foundClient);
       setLoading(false);
     };
 

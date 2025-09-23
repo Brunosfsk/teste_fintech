@@ -59,11 +59,11 @@ export const useClientApi = () => {
     );
   }, [handleRequest]);
 
-  // PUT - Atualizar cliente
+  // PATCH - Atualizar cliente
   const updateClient = useCallback(async (id: number, clientData: ClientFormData): Promise<Client | null> => {
     return handleRequest<Client>(() =>
       fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
