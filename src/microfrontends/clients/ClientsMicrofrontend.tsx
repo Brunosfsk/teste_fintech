@@ -32,8 +32,11 @@ const ClientsMicrofrontend: React.FC = () => {
   };
 
   useEffect(() => {
-    loadClients(currentPage);
-  }, []);
+    // Verificar se não há clientes no store ou se é necessário recarregar
+    if (clients.length === 0) {
+      loadClients(currentPage);
+    }
+  }, [clients.length, currentPage]);
 
   const loadClients = async (page: number) => {
     try {

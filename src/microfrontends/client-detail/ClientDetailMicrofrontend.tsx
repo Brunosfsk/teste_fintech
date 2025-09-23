@@ -1,20 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useClientStore } from '../../store/clientStore';
 import { useUserStore } from '../../store/userStore';
+import { useClientApi } from '../../hooks/useClientApi';
+import { Client } from '../../types/Client';
 
 const ClientDetailMicrofrontend: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
-  const getClientById = useClientStore((state) => state.getClientById);
+  const { clients, getClientById } = useClientStore();
+  const { getClientById: getClientByIdApi } = useClientApi();
+  const [client, setClient] = useState<Client | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadClient = async () => {
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+
+      const clientId = parseInt(id);
+      
+      // Primeiro, tentar buscar no store local
+      let foundClient = getClientById(clientId);
+      
+      // Se não encontrar no store e não há clientes carregados, buscar na API
+      if (!foundClient && clients.length === 0) {
+        try {
+          foundClient = await getClientByIdApi(clientId);
+        } catch (error) {
+          console.error('Erro ao buscar cliente na API:', error);
+        }
+      }
+      
+      setClient(foundClient || null);
+      setLoading(false);
+    };
+
+    loadClient();
+  }, [id, clients.length, getClientById, getClientByIdApi]);
 
   if (!user) {
     navigate('/');
     return null;
   }
 
-  const client = id ? getClientById(parseInt(id)) : null;
+  if (loading) {
+    return (
+      <div className="min-h-screen p-5" style={{backgroundColor: '#f5f5f5'}}>
+        <div className="card animate-fade-in">
+          <div className="text-center py-12">
+            <div className="text-4xl mb-4">⏳</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Carregando...</h2>
+            <p className="text-gray-600">Buscando informações do cliente.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!client) {
     return (

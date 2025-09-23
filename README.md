@@ -2,6 +2,8 @@
 
 Este projeto foi desenvolvido como parte de um **teste técnico** para demonstrar habilidades em desenvolvimento frontend com React, TypeScript e arquitetura de microfrontends.
 
+![Projeto](./src/assets/projeto.jpg)
+
 ## 📋 Sobre o Projeto
 
 O sistema é uma aplicação web para gerenciamento de clientes de uma fintech, construída com uma arquitetura de microfrontends que permite modularidade e escalabilidade. A aplicação consome uma API REST externa para realizar operações CRUD completas.
