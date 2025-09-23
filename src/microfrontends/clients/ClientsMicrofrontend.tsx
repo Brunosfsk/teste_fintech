@@ -30,34 +30,69 @@ const ClientsMicrofrontend: React.FC = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Forçar modo cards no mobile
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) { // sm breakpoint
+        setViewMode('cards');
+      }
+    };
+
+    handleResize(); // Verificar no carregamento inicial
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const loadClients = async (page: number) => {
+      try {
+        setLoading(true);
+        const response = await getClients({ page, limit: 16 });
+        if (response) {
+          setClients(response.clients);
+          setPagination({
+            currentPage: response.currentPage,
+            totalPages: response.totalPages,
+            totalClients: response.clients.length
+          });
+        }
+      } catch (error) {
+        setError('Erro ao carregar clientes');
+        console.error('Erro ao carregar clientes:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (clients.length === 0) {
       loadClients(currentPage);
     }
-  }, [clients.length, currentPage]);
-
-  const loadClients = async (page: number) => {
-    try {
-      setLoading(true);
-      const response = await getClients({ page, limit: 16 });
-      if (response) {
-        setClients(response.clients);
-        setPagination({
-          totalClients: response.clients.length,
-          currentPage: response.currentPage,
-          totalPages: response.totalPages
-        });
-      }
-    } catch (error) {
-      setError('Erro ao carregar clientes');
-      console.error('Erro ao carregar clientes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [clients.length, currentPage, getClients, setClients, setPagination, setLoading, setError]);
 
   const handlePageChange = (page: number) => {
-    loadClients(page);
+    // Criar função loadClients local para handlePageChange
+    const loadClientsForPage = async (pageNum: number) => {
+      try {
+        setLoading(true);
+        const response = await getClients({ page: pageNum, limit: 16 });
+        if (response) {
+          setClients(response.clients);
+          setPagination({
+            currentPage: response.currentPage,
+            totalPages: response.totalPages,
+            totalClients: response.clients.length
+          });
+        }
+      } catch (error) {
+        setError('Erro ao carregar clientes');
+        console.error('Erro ao carregar clientes:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadClientsForPage(page);
   };
 
   const handleEditClient = (client: Client) => {
@@ -71,7 +106,28 @@ const ClientsMicrofrontend: React.FC = () => {
   };
 
   const handleSuccess = () => {
-    loadClients(currentPage);
+    // Recarregar clientes após sucesso
+    const reloadClients = async () => {
+      try {
+        setLoading(true);
+        const response = await getClients({ page: currentPage, limit: 16 });
+        if (response) {
+          setClients(response.clients);
+          setPagination({
+            currentPage: response.currentPage,
+            totalPages: response.totalPages,
+            totalClients: response.clients.length
+          });
+        }
+      } catch (error) {
+        setError('Erro ao carregar clientes');
+        console.error('Erro ao carregar clientes:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    reloadClients();
   };
 
   const handleSelectionChange = (selectedIds: number[]) => {
@@ -125,15 +181,16 @@ const ClientsMicrofrontend: React.FC = () => {
       <Header onMenuToggle={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       <Sidebar selectedClientsCount={selectedClients.length} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <div className={`flex-1 pt-24 transition-all duration-300 ease-in-out ${
+      <div className={`flex-1 pt-24 px-4 sm:px-6 transition-all duration-300 ease-in-out ${
         isSidebarOpen ? 'md:ml-64 ml-0 opacity-75' : 'ml-0 opacity-100'
       }`}>
-        <div className="w-full max-w-none xl:max-w-[80%] mx-auto p-5">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
-            <div className="flex justify-between items-center flex-wrap gap-4">
-              <h1 className="text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes</h1>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center space-x-3">
+        <div className="w-full max-w-none xl:max-w-[80%] mx-auto">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8 animate-fade-in">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes</h1>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+                {/* Seletor de visualização - oculto no mobile */}
+                <div className="hidden sm:flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Visualização:</span>
                   <div className="relative">
                     <div 

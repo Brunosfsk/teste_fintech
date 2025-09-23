@@ -23,7 +23,7 @@ const AuthMicrofrontend: React.FC = () => {
 
     setError('');
     setUser(name.trim());
-    navigate('/clientes');
+    navigate('/home');
   };
 
   return (
@@ -31,7 +31,7 @@ const AuthMicrofrontend: React.FC = () => {
       <div className="card max-w-md w-full animate-fade-in">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2 md:text-2xl" style={{ color: '#EC6724' }}>
-            Sistema de Clientes
+            Olá, seja bem vindo!
           </h1>
           <p className="text-gray-600">Entre com seu nome para continuar</p>
         </div>

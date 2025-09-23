@@ -4,6 +4,7 @@ import { AuthMicrofrontend } from './microfrontends/auth';
 import { ClientsMicrofrontend } from './microfrontends/clients';
 import { ClientDetailMicrofrontend } from './microfrontends/client-detail';
 import SelectedClientsMicrofrontend from './microfrontends/selected-clients';
+import HomeMicrofrontend from './microfrontends/home/HomeMicrofrontend';
 import { useUserStore } from './store/userStore';
 
 const App: React.FC = () => {
@@ -13,6 +14,10 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<AuthMicrofrontend />} />
+        <Route 
+          path="/home" 
+          element={user ? <HomeMicrofrontend /> : <Navigate to="/" />} 
+        />
         <Route 
           path="/clientes" 
           element={user ? <ClientsMicrofrontend /> : <Navigate to="/" />} 

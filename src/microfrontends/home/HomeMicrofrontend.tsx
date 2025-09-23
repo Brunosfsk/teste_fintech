@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 import { useSelectedClientsStore } from '../../store/selectedClientsStore';
 import { useClientStore } from '../../store/clientStore';
+import { useClientApi } from '../../hooks/useClientApi';
 
 const HomeMicrofrontend: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const selectedClients = useSelectedClientsStore((state) => state.selectedClients);
   const clearSelectedClients = useSelectedClientsStore((state) => state.clearSelectedClients);
-  const { clients } = useClientStore();
+  const { totalClients, setPagination } = useClientStore();
+  const { getClients } = useClientApi();
+
+  useEffect(() => {
+    const loadTotalClients = async () => {
+      if (totalClients === 0) {
+        const response = await getClients({ page: 1, limit: 100 });
+        if (response) {
+          setPagination({
+            currentPage: 1,
+            totalPages: response.totalPages,
+            totalClients: response.clients.length,
+          });
+        }
+      }
+    };
+
+    loadTotalClients();
+  }, [totalClients, getClients, setPagination]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -30,29 +49,29 @@ const HomeMicrofrontend: React.FC = () => {
         onClose={closeSidebar}
       />
       
-      <div className={`transition-all duration-300 ease-in-out pt-24 ${
+      <div className={`transition-all duration-300 ease-in-out pt-24 px-4 sm:px-6 ${
         isSidebarOpen ? 'md:ml-64 ml-0 opacity-75' : 'ml-0 opacity-100'
       }`}>
-        <div className="w-full max-w-[1200px] 2xl:max-w-[80%] mx-auto p-5">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
-            <div className="flex justify-between items-center">
+        <div className="w-full max-w-[1200px] 2xl:max-w-[80%] mx-auto">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8 animate-fade-in">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
               <div>
-                <h1 className="text-3xl font-bold text-[#EC6724]">Dashboard</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#EC6724]">Dashboard</h1>
                 <p className="text-gray-600 mt-1">Olá, seja bem vindo!</p>
               </div>
-              <div className="text-right">
+              <div className="text-left sm:text-right">
                 <p className="text-sm text-gray-500">Último acesso</p>
                 <p className="text-lg font-semibold text-gray-900">{new Date().toLocaleDateString('pt-BR')}</p>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="bg-white rounded-lg shadow-md p-6 animate-fade-in">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total de Clientes</p>
-                  <p className="text-2xl font-bold text-gray-900">{clients.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{totalClients}</p>
                 </div>
                 <div className="p-3 bg-blue-100 rounded-full">
                   <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +113,7 @@ const HomeMicrofrontend: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Ativos</p>
-                  <p className="text-2xl font-bold text-gray-900">{clients.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{totalClients}</p>
                 </div>
                 <div className="p-3 bg-purple-100 rounded-full">
                   <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

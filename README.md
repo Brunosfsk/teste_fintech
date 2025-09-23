@@ -99,27 +99,60 @@ npm run lint     # Executa verificação de código
 ## 📁 Estrutura do Projeto
 
 ```
-src/
-├── components/          # Componentes compartilhados
-│   ├── Header.tsx
-│   ├── Sidebar.tsx
-│   └── Pagination.tsx
-├── microfrontends/      # Módulos da aplicação
-│   ├── auth/           # Autenticação
-│   ├── clients/        # Gerenciamento de clientes
-│   ├── client-detail/  # Detalhes do cliente
-│   ├── home/           # Dashboard principal
-│   └── selected-clients/ # Clientes selecionados
-├── hooks/              # Custom hooks
-│   └── useClientApi.ts # Hook para API de clientes
-├── store/              # Gerenciamento de estado
-│   ├── clientStore.ts
-│   ├── selectedClientsStore.ts
-│   └── userStore.ts
-├── types/              # Definições TypeScript
-│   └── Client.ts
-└── assets/             # Recursos estáticos
+├── .dockerignore        # Otimização do contexto Docker
+├── .gitignore          # Arquivos ignorados pelo Git
+├── Dockerfile          # Container de produção (multi-stage)
+├── Dockerfile.dev      # Container de desenvolvimento
+├── README-Docker.md    # Documentação Docker
+├── docker-compose.yml  # Orquestração de containers
+├── nginx.conf          # Configuração Nginx para SPA
+├── vercel.json         # Configuração de deploy Vercel
+├── package.json        # Dependências e scripts
+├── tailwind.config.js  # Configuração Tailwind CSS
+├── tsconfig.json       # Configuração TypeScript
+├── vite.config.ts      # Configuração Vite
+├── public/             # Arquivos públicos estáticos
+└── src/
+    ├── components/          # Componentes compartilhados
+    │   ├── Header.tsx
+    │   ├── Sidebar.tsx
+    │   ├── ClientCard.tsx
+    │   └── Pagination.tsx
+    ├── microfrontends/      # Módulos da aplicação
+    │   ├── auth/           # Autenticação
+    │   ├── clients/        # Gerenciamento de clientes
+    │   ├── client-detail/  # Detalhes do cliente
+    │   ├── home/           # Dashboard principal
+    │   └── selected-clients/ # Clientes selecionados
+    ├── hooks/              # Custom hooks
+    │   └── useClientApi.ts # Hook para API de clientes
+    ├── store/              # Gerenciamento de estado
+    │   ├── clientStore.ts
+    │   ├── selectedClientsStore.ts
+    │   └── userStore.ts
+    ├── types/              # Definições TypeScript
+    │   └── Client.ts
+    └── assets/             # Recursos estáticos
 ```
+
+## 🐳 Docker & Deploy
+
+### Containerização Local
+O projeto inclui configuração completa do Docker para desenvolvimento e produção:
+
+- **Dockerfile**: Build otimizado multi-stage (Node.js + Nginx)
+- **Dockerfile.dev**: Container de desenvolvimento com hot reload
+- **docker-compose.yml**: Orquestração completa dos serviços
+- **nginx.conf**: Configuração SPA para React Router
+- **.dockerignore**: Otimização do contexto de build
+
+Para usar Docker localmente, consulte o <mcfile name="README-Docker.md" path="c:\Users\Bruno\Desktop\Estudos\Teste_fintech\README-Docker.md"></mcfile>.
+
+### ⚠️ Observação sobre Docker + Vercel
+
+Embora eu tenha containerizado a aplicação localmente com Docker (veja Dockerfile e docker-compose.yml), a **Vercel não suporta deployments via Docker** para aplicações frontend estáticas como React + Vite. A Vercel é otimizada para construir e servir a partir do código-fonte.
+
+Portanto, o deploy foi feito da forma nativa suportada pela plataforma. Caso o objetivo fosse deploy com Docker, seria necessário usar outra plataforma como **Railway**, **Render**, **AWS ECS**, etc.
 
 ## 🔧 Funcionalidades Técnicas Implementadas
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import { useSelectedClientsStore } from '../../store/selectedClientsStore';
@@ -27,6 +27,20 @@ const SelectedClientsMicrofrontend: React.FC = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  // Forçar modo cards no mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) { // sm breakpoint
+        setViewMode('cards');
+      }
+    };
+
+    handleResize(); // Verificar no carregamento inicial
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleEditClient = (client: Client) => {
     setEditingClient(client);
@@ -83,25 +97,26 @@ const SelectedClientsMicrofrontend: React.FC = () => {
       <Header onMenuToggle={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       <Sidebar selectedClientsCount={selectedClients.length} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
-      <div className={`flex-1 pt-24 transition-all duration-300 ease-in-out ${
+      <div className={`flex-1 pt-24 px-4 sm:px-6 transition-all duration-300 ease-in-out ${
         isSidebarOpen ? 'md:ml-64 ml-0 opacity-75' : 'ml-0 opacity-100'
       }`}>
-        <div className="w-full max-w-none xl:max-w-[80%] mx-auto p-5">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
-            <div className="flex justify-between items-center flex-wrap gap-4">
-              <h1 className="text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes Selecionados</h1>
-              <div className="flex items-center gap-4">
+        <div className="w-full max-w-none xl:max-w-[80%] mx-auto">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8 animate-fade-in">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: '#EC6724' }}>Clientes Selecionados</h1>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                 {/* Botão Limpar Selecionados */}
                 {selectedClients.length > 0 && (
                   <button
                     onClick={handleClearSelected}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium w-full sm:w-auto"
                   >
                     Limpar Selecionados
                   </button>
                 )}
                 
-                <div className="flex items-center space-x-3">
+                {/* Seletor de visualização - oculto no mobile */}
+                <div className="hidden sm:flex items-center space-x-3">
                   <span className="text-sm font-medium text-gray-700">Visualização:</span>
                   <div className="relative">
                     <div 
@@ -116,7 +131,7 @@ const SelectedClientsMicrofrontend: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 6h18m-9 8h9" />
                     </svg>
